@@ -7,7 +7,9 @@ def hello():
 
 @app.route("/GetCustomerAccountByAccountNumber")
 def getCustomerAccountByAccountNumber():
-    return "<h1 style='color:blue'>Getting Customer Account By Account Number.</h1>"
+    my_dict = {"firstName": 'Melissa', "lastName": 'Testing'}
+    return my_dict
+    #return "<h1 style='color:blue'>Getting Customer Account By Account Number.</h1>"
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0')
