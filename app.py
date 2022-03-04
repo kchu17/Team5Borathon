@@ -75,14 +75,62 @@ def OpenCustomerAccount():
 
 @app.route("/CloseCustomerAccount", methods=['POST'])
 def CloseCustomerAccount():
-    #accountNumber = request.args.get('accountNumber')
-    my_dict = {'firstName': 'Belissa', 'account': 'test'}
+    accountNumber = request.args.get('accountNumber')
+
+    cur = conn.cursor()
+    cur.execute("UPDATE Account SET status = %s WHERE accountNumber = %s;", ("Closed", accountNumber))
+    conn.commit()
+
+    cur = conn.cursor()
+    cur.execute("SELECT balance,status,accountID FROM Account WHERE accountNumber = %s;", accountNumber)
+    balance,status,accountID = cur.fetchall()[0]
+
+    cur = conn.cursor()
+    cur.execute("SELECT firstName, lastName FROM Customer WHERE accountID = %s;", accountID)
+    customer = cur.fetchall()[0]
+    print(customer)
+    
+
+    my_dict = {'firstName': customer[0], 'lastName': customer[1], 'accountNumber':accountNumber, 'balance' : balance, 'status' : status}
+
     return jsonify(my_dict)
 
 @app.route("/ApplyTransactionToCustomerAccountAsync", methods=['POST'])
 def ApplyTransactionToCustomerAccountAsync():
-    #accountNumber = request.args.get('accountNumber')
-    my_dict = {'firstName': 'Belissa', 'account': 'test'}
+    accountNumber = request.args.get('accountNumber')
+    amount = float(request.args.get('amount'))
+    transactionType = request.args.get('transactionType')
+
+
+    cur = conn.cursor()
+    cur.execute("SELECT balance,accountID FROM Account WHERE accountNumber = %s;", accountNumber)
+    balance,accountID = cur.fetchall()[0]
+
+    cur = conn.cursor()
+    cur.execute("INSERT INTO Transaction (amount,transactionType,accountID) VALUES (%s,%s,%s)", (amount,transactionType,accountID))
+    conn.commit()
+
+    if transactionType == "Credit":
+        pass
+    elif transactionType == "Debit":
+        amount = 0 - amount
+
+    cur = conn.cursor()
+    cur.execute("UPDATE Account SET balance = %s WHERE accountNumber = %s;", (balance + amount, accountNumber))
+    conn.commit()
+
+    
+
+    cur = conn.cursor()
+    cur.execute("SELECT firstName, lastName FROM Customer WHERE accountID = %s;", accountID)
+    customer = cur.fetchall()[0]
+    print(customer)
+    cur = conn.cursor()
+    cur.execute("SELECT balance,status FROM Account WHERE accountNumber = %s;", accountNumber)
+    balance,status = cur.fetchall()[0]
+
+    my_dict = {'firstName': customer[0], 'lastName': customer[1], 'accountNumber':accountNumber, 'balance' : balance, 'status' : status}
+
     return jsonify(my_dict)
 
 @app.route("/GetJohnTest", methods=['GET'])
@@ -92,6 +140,6 @@ def getJohnTest():
     return jsonify(my_dict)
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0')
+    app.run(host='0.0.0.0', port=80)
 
 
