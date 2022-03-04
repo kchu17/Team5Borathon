@@ -1,3 +1,4 @@
+from random import randint, random
 from flask import Flask, request, jsonify
 import pymysql
 
@@ -30,13 +31,42 @@ def hello():
 @app.route("/GetCustomerAccountByAccountNumber", methods=['GET'])
 def getCustomerAccountByAccountNumber():
     accountNumber = request.args.get('accountNumber')
-    my_dict = {'firstName': 'Belissa', 'account': accountNumber}
+
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM Account WHERE accountNumber = %s;", accountNumber)
+    account = cur.fetchall()[0]
+
+    print(account[0])
+
+    cur = conn.cursor()
+    cur.execute("SELECT firstName, lastName FROM Customer WHERE accountID = %s;", account[0])
+    customer = cur.fetchall()
+    print(customer)
+
+    my_dict = {'firstName': customer[0], 'lastName': customer[1], 'balance' : account[2], 'status' : account[3]}
+
     return jsonify(my_dict)
 
 @app.route("/OpenCustomerAccount", methods=['POST'])
 def OpenCustomerAccount():
-    #accountNumber = request.args.get('accountNumber')
-    my_dict = {'firstName': 'Belissa', 'account': 'test'}
+    firstName = request.args.get('firstName')
+    lastName = request.args.get('lastName')
+    
+    accountNumber = randint(0,10000)
+    balance = 0
+    status = "Open"
+
+    cur = conn.cursor()
+    cur.execute("INSERT INTO Account (accountNumber,balance,status) VALUES (%s,%s,%s)", (accountNumber,balance,status))
+    conn.commit()
+
+    cur = conn.cursor()
+    cur.execute("SELECT LAST_INSERT_ID();")
+    accountID = cur.fetchall()
+    print(accountID[0], accountNumber)
+
+    my_dict = {'firstName': firstName, 'account': accountNumber}
+    print(my_dict)
     return jsonify(my_dict)
 
 @app.route("/CloseCustomerAccount", methods=['POST'])
@@ -58,6 +88,6 @@ def getJohnTest():
     return jsonify(my_dict)
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0')
+    app.run(host='0.0.0.0', port=80)
 
 
