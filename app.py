@@ -33,6 +33,24 @@ def getCustomerAccountByAccountNumber():
     my_dict = {'firstName': 'Belissa', 'account': accountNumber}
     return jsonify(my_dict)
 
+@app.route("/OpenCustomerAccount", methods=['POST'])
+def OpenCustomerAccount():
+    #accountNumber = request.args.get('accountNumber')
+    my_dict = {'firstName': 'Belissa', 'account': 'test'}
+    return jsonify(my_dict)
+
+@app.route("/CloseCustomerAccount", methods=['POST'])
+def CloseCustomerAccount():
+    #accountNumber = request.args.get('accountNumber')
+    my_dict = {'firstName': 'Belissa', 'account': 'test'}
+    return jsonify(my_dict)
+
+@app.route("/ApplyTransactionToCustomerAccountAsync", methods=['POST'])
+def ApplyTransactionToCustomerAccountAsync():
+    #accountNumber = request.args.get('accountNumber')
+    my_dict = {'firstName': 'Belissa', 'account': 'test'}
+    return jsonify(my_dict)
+
 @app.route("/GetJohnTest", methods=['GET'])
 def getJohnTest():
     result = get_details()
