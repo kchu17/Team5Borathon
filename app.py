@@ -11,17 +11,6 @@ conn = pymysql.connect(
         db = 'bankDB',
         )
 
-# create DB
-# with conn.cursor() as cur:
-#     cur.execute('create database bankDB;')
-
-# create table
-# cursor=conn.cursor()
-# create_table="""
-# create table testTable1 (name varchar(200),email varchar(200),comment varchar(200),gender varchar(20))
-# """
-# cursor.execute(create_table)
-
 def insert_details(name,email,comment,gender):
     cur = conn.cursor()
     cur.execute("INSERT INTO testTable1 (name,email,comment,gender) VALUES (%s,%s,%s,%s)", (name,email,comment,gender))
@@ -33,11 +22,6 @@ def get_details():
     cur.execute("SELECT * FROM testTable1")
     details = cur.fetchall()
     return details
-
-# def select(name):
-#     cur=conn.cursor()
-#     cur.execute("SELECT comment FROM testTable1 WHERE name = %s", (name,email,comment,gender))
-#     conn.commit()
 
 @app.route("/")
 def hello():
