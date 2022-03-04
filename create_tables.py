@@ -36,10 +36,19 @@ conn = pymysql.connect(
 #     FOREIGN KEY (accountID) REFERENCES Account(accountID)
 # );
 
-# - ---------- Actual code ----------
+# ----------- Actual code ----------
 # create Account table
 with conn.cursor() as cur:
     cur.execute('CREATE TABLE Account (accountID INT NOT NULL AUTO_INCREMENT, accountNumber VARCHAR(200) NOT NULL, balance FLOAT NOT NULL, status VARCHAR(200) NOT NULL, PRIMARY KEY (accountID));')
+
+# create Customer table
+with conn.cursor() as cur:
+    cur.execute('CREATE TABLE Customer (customerID INT NOT NULL AUTO_INCREMENT, firstName VARCHAR(200) NOT NULL, lastName VARCHAR(200) NOT NULL, PRIMARY KEY (customerID), accountID INT NOT NULL, FOREIGN KEY (accountID) REFERENCES Account(accountID));')
+
+# create Transaction table
+with conn.cursor() as cur:
+    cur.execute('CREATE TABLE Transaction (transactionID INT NOT NULL AUTO_INCREMENT, amount FLOAT NOT NULL, transactionType VARCHAR(200) NOT NULL, PRIMARY KEY (transactionID), accountID INT NOT NULL, FOREIGN KEY (accountID) REFERENCES Account(accountID));')
+
 
 # # addin auto increment to Account table
 # with conn.cursor() as cur:
@@ -50,14 +59,5 @@ with conn.cursor() as cur:
 
 # with conn.cursor() as cur:
 #     cur.execute('ALTER TABLE Transaction ADD transactionID INT NOT NULL AUTO_INCREMENT;')
-
-
-# create Customer table
-with conn.cursor() as cur:
-    cur.execute('CREATE TABLE Customer (customerID INT NOT NULL AUTO_INCREMENT, firstName VARCHAR(200) NOT NULL, lastName VARCHAR(200) NOT NULL, PRIMARY KEY (customerID), accountID INT NOT NULL, FOREIGN KEY (accountID) REFERENCES Account(accountID));')
-
-# create Transaction table
-with conn.cursor() as cur:
-    cur.execute('CREATE TABLE Transaction (transactionID INT NOT NULL AUTO_INCREMENT, amount FLOAT NOT NULL, transactionType VARCHAR(200) NOT NULL, PRIMARY KEY (transactionID), accountID INT NOT NULL, FOREIGN KEY (accountID) REFERENCES Account(accountID));')
 
  

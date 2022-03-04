@@ -35,15 +35,14 @@ def getCustomerAccountByAccountNumber():
     cur = conn.cursor()
     cur.execute("SELECT * FROM Account WHERE accountNumber = %s;", accountNumber)
     account = cur.fetchall()[0]
-
     print(account[0])
 
     cur = conn.cursor()
     cur.execute("SELECT firstName, lastName FROM Customer WHERE accountID = %s;", account[0])
-    customer = cur.fetchall()
+    customer = cur.fetchall()[0]
     print(customer)
 
-    my_dict = {'firstName': customer[0], 'lastName': customer[1], 'balance' : account[2], 'status' : account[3]}
+    my_dict = {'firstName': customer[0], 'lastName': customer[1], 'accountNumber':account[1], 'balance' : account[2], 'status' : account[3]}
 
     return jsonify(my_dict)
 
@@ -62,8 +61,13 @@ def OpenCustomerAccount():
 
     cur = conn.cursor()
     cur.execute("SELECT LAST_INSERT_ID();")
-    accountID = cur.fetchall()
-    print(accountID[0], accountNumber)
+    accountID = cur.fetchall()[0]
+    print(accountID, accountNumber)
+
+    cur = conn.cursor()
+    cur.execute("INSERT INTO Customer (firstName,lastName,accountID) VALUES (%s,%s,%s)", (firstName,lastName,accountID))
+    conn.commit()
+
 
     my_dict = {'firstName': firstName, 'account': accountNumber}
     print(my_dict)
